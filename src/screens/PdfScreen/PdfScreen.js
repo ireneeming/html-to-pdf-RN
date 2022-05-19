@@ -13,7 +13,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 
 import FileViewer from 'react-native-file-viewer';
-import {Alert} from 'react-native';
+import {writeFile, readFile, DownloadDirectoryPath} from 'react-native-fs';
 
 const data = {
   name: 'Tonny Hill',
@@ -148,28 +148,38 @@ const PdfScreen = () => {
       //File Name
       fileName: 'my-test',
       //File directory
-      directory: 'Download',
+      directory: 'Documents',
 
       //base64: true,
     };
 
     let file = await RNHTMLtoPDF.convert(options);
     // console.log(file.filePath);
-    Alert.alert(
-      'Successfully Exported',
-      'Path:' + file.filePath,
-      [
-        {text: 'Cancel', style: 'cancel'},
-        {
-          text: 'Open',
-          onPress: () => {
-            openFile(file.filePath);
-            console.log(file.filePath);
-          },
-        },
-      ],
-      {cancelable: true},
-    );
+
+    // Write generated excel to Storage
+    writeFile(DownloadDirectoryPath + '/testPDF.pdf', file, 'ascii')
+      .then(res => {
+        alert('Export Data Successfully..!');
+      })
+      .catch(e => {
+        console.log('Error writeFile', e);
+      });
+
+    // Alert.alert(
+    //   'Successfully Exported',
+    //   'Path:' + file.filePath,
+    //   [
+    //     {text: 'Cancel', style: 'cancel'},
+    //     {
+    //       text: 'Open',
+    //       onPress: () => {
+    //         openFile(file.filePath);
+    //         console.log(file.filePath);
+    //       },
+    //     },
+    //   ],
+    //   {cancelable: true},
+    // );
   };
 
   const openFile = filepath => {

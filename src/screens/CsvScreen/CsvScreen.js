@@ -20,7 +20,7 @@ import {writeFile, readFile, DownloadDirectoryPath} from 'react-native-fs';
 import XLSX from 'xlsx';
 
 const CsvScreen = () => {
-  const exportDataToCSV = () => {
+  const createCSV = () => {
     let sample_data_to_export = [
       {
         id: '1',
@@ -45,7 +45,7 @@ const CsvScreen = () => {
     const wbout = XLSX.write(wb, {type: 'binary', bookType: 'xlsx'});
 
     // Write generated excel to Storage
-    writeFile(DownloadDirectoryPath + '/testCSVtest.csv', wbout, 'ascii')
+    writeFile(DownloadDirectoryPath + '/testCSVtest3.csv', wbout, 'ascii')
       .then(res => {
         alert('Export Data Successfully..!');
       })
@@ -54,46 +54,74 @@ const CsvScreen = () => {
       });
   };
 
-  const createCSV = async () => {
-    try {
-      // Check for Permission (check if permission is already given or not)
-      let isPermitedExternalStorage = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      );
-
-      if (!isPermitedExternalStorage) {
-        // ASK for permission
+  const askPermission = () => {
+    async function requestExternalWritePermission() {
+      try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
-            title: 'Storage Permission Needed',
-            buttonNeutral: 'Ask me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
+            title: 'Pdf creator needs External Storage Write Permission',
+            message: 'Pdf creator needs access to Storage data in your SD Card',
           },
         );
-
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          exportDataToCSV();
+          createCSV();
           console.log('Permission granted');
         } else {
           console.log('Permission Denied');
           alert('Permission Denied');
         }
-      } else {
-        // Already have Permission (Calling our export)
-        exportDataToCSV();
+      } catch (err) {
+        alert('Write permission err', err);
+        console.warn(err);
       }
-    } catch (e) {
-      console.log('Error while checking permission');
-      console.log(e);
-      return;
     }
+    if (Platform.OS === 'android') {
+      requestExternalWritePermission();
+    } else {
+      createCSV();
+      alert('IOS saved?');
+    }
+  };
+
+  const createCSVpermission = async () => {
+    // try {
+    //   // Check for Permission (check if permission is already given or not)
+    //   let isPermitedExternalStorage = await PermissionsAndroid.check(
+    //     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    //   );
+    //   if (!isPermitedExternalStorage) {
+    //     // ASK for permission
+    //     const granted = await PermissionsAndroid.request(
+    //       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    //       {
+    //         title: 'Storage Permission Needed',
+    //         buttonNeutral: 'Ask me Later',
+    //         buttonNegative: 'Cancel',
+    //         buttonPositive: 'OK',
+    //       },
+    //     );
+    //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //       exportDataToCSV();
+    //       console.log('Permission granted');
+    //     } else {
+    //       console.log('Permission Denied');
+    //       alert('Permission Denied');
+    //     }
+    //   } else {
+    //     // Already have Permission (Calling our export)
+    //     exportDataToCSV();
+    //   }
+    // } catch (e) {
+    //   console.log('Error while checking permission');
+    //   console.log(e);
+    //   return;
+    // }
   };
 
   return (
     <View style={styles.MainContainer}>
-      <TouchableOpacity onPress={() => createCSV()}>
+      <TouchableOpacity onPress={askPermission}>
         <Image
           source={{
             uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaJnsWXEDdlC5Hjn28KUVgd1IJp95h6YqsMKcC6SUq8RkWEuf0ef6IF7uJpHxWinpGFQM&usqp=CAU',
