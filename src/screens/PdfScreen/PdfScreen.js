@@ -11,6 +11,7 @@ import {Image} from 'react-native';
 import {TouchableOpacity, PermissionsAndroid} from 'react-native';
 import {StyleSheet, Text, View} from 'react-native';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+
 import FileViewer from 'react-native-file-viewer';
 import {Alert} from 'react-native';
 
@@ -147,9 +148,9 @@ const PdfScreen = () => {
       //File Name
       fileName: 'my-test',
       //File directory
-      directory: 'Documents',
+      directory: 'Download',
 
-      base64: true,
+      //base64: true,
     };
 
     let file = await RNHTMLtoPDF.convert(options);

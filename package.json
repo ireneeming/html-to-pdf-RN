@@ -14,8 +14,10 @@
     "react-native": "0.68.2",
     "react-native-csv": "^0.2.0",
     "react-native-file-viewer": "^2.1.5",
+    "react-native-fs": "^2.20.0",
     "react-native-html-to-pdf": "^0.12.0",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/core": "^7.17.12",
